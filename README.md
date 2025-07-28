@@ -51,7 +51,7 @@ Located at **Line ~13** in `component_groups`
     }
 }
 ```
-We use this component groups to remove and restore gravity
+Function : We use this component groups to remove and restore gravity
 ### Rideable component
 Located at **Line ~183** in `component_groups.minecraft:pig_saddled`:
 
@@ -74,7 +74,7 @@ Located at **Line ~183** in `component_groups.minecraft:pig_saddled`:
 }
 ```
 
-We use this to call fly and walk events  
+Function : We use this to call fly and walk events  
 
 #### Fly and Walk Events
 
@@ -107,7 +107,7 @@ Located in the `events` section — Line ~349:
 }
 ```
 
-this code is for adding and removing component groups
+Function : this code is for adding and removing component groups
 
 ---
 
@@ -131,11 +131,13 @@ Defined under `component_groups.minecraft:pig_saddled` — Line ~212:
 
 ### what the code do:
 
+When player ride the pig:
+
 - Gravity is removed (via `fly` event) when player ride pig
 - `walk` component group is removed
 - `fly` component group is added (disabling gravity)
 
-When the rider dismounts the pig:
+When player dismounts the pig:
 
 - Gravity is restored (via `walk` event) when player exit riding pig
 - `fly` component group is removed
