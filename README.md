@@ -21,7 +21,8 @@ Located at **Line ~209** in the `minecraft:pig_saddled` group:
 ---
 # Bug?
 
-Normally, this component **only works on hover entities** (those with `movement.hover`), not with typical ground entities using `movement.basic` or `movement.generic`.
+Normally, this component **only works on hover entities** (those with `movement.hover`),
+not with typical ground entities using `movement.basic` or `movement.generic`.
 
 We bypass this limitation by dynamically toggling gravity and switching movement-related components using custom events (`fly` and `walk`) when a rider enters or exits the entity.
 
@@ -29,7 +30,9 @@ We bypass this limitation by dynamically toggling gravity and switching movement
 
 ## ON/OFF-ing gravity
 
-### Walk and Fly component group
+Note : this is for non `movement.hover` if your entity already has that component you dont need this
+
+### Walk and Fly Component Groups
 
 Located at **Line ~13** in `component_groups`
 
@@ -48,7 +51,7 @@ Located at **Line ~13** in `component_groups`
     }
 }
 ```
-
+We use this component groups to remove and restore gravity
 ### Rideable component
 Located at **Line ~183** in `component_groups.minecraft:pig_saddled`:
 
@@ -70,6 +73,8 @@ Located at **Line ~183** in `component_groups.minecraft:pig_saddled`:
     "on_rider_exit_event": "walk"  // Call walk event on exit
 }
 ```
+
+We use this to call fly and walk events  
 
 #### Fly and Walk Events
 
@@ -102,6 +107,28 @@ Located in the `events` section — Line ~349:
 }
 ```
 
+this code is for adding and removing component groups
+
+---
+
+## 🛬 Disable Fall Damage
+
+When dismounted in the air, the pig would fall and take damage. To prevent this, we use `minecraft:damage_sensor` to ignore fall damage.
+
+Defined under `component_groups.minecraft:pig_saddled` — Line ~212:
+
+```json
+"minecraft:damage_sensor": {
+    "triggers": {
+        "cause": "fall",
+        "deals_damage": "no"
+    }
+}
+```
+
+---
+
+
 ### what the code do:
 
 - Gravity is removed (via `fly` event) when player ride pig
@@ -123,23 +150,5 @@ This enables air control using `minecraft:input_air_controlled`
 
 
 
----
-
-## 🛬 Disable Fall Damage
-
-When dismounted in the air, the pig would fall and take damage. To prevent this, we use `minecraft:damage_sensor` to ignore fall damage.
-
-Defined under `component_groups.minecraft:pig_saddled` — Line ~212:
-
-```json
-"minecraft:damage_sensor": {
-    "triggers": {
-        "cause": "fall",
-        "deals_damage": "no"
-    }
-}
-```
-
----
 
 
