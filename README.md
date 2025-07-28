@@ -1,34 +1,55 @@
 
 # Minecraft Bedrock: Flying Pig using `minecraft:input_air_controlled`
 
-This is an example of how to enable **flying control for walking entities** (like pigs) in Minecraft Bedrock Edition using `minecraft:input_air_controlled`. Normally, this component **only works on hover entities** (those with `movement.hover`), not with typical ground entities using `movement.basic` or `movement.generic`.
+This is an example of how to enable **flying control for entities** in Minecraft Bedrock Edition using `minecraft:input_air_controlled`. 
+
+# How It Works
+
+## Air Control Component
+
+To enable control in the air, we add the `minecraft:input_air_controlled` component:
+
+Located at **Line ~209** in the `minecraft:pig_saddled` group:
+
+```json
+"minecraft:input_air_controlled": {
+    "strafe_speed_modifier": 1,
+    "backwards_movement_modifier": 0.5
+}
+```
+
+---
+# Bug?
+
+Normally, this component **only works on hover entities** (those with `movement.hover`), not with typical ground entities using `movement.basic` or `movement.generic`.
 
 We bypass this limitation by dynamically toggling gravity and switching movement-related components using custom events (`fly` and `walk`) when a rider enters or exits the entity.
 
 ---
 
-## 🚀 How It Works
+## ON/OFF-ing gravity
 
-### 🔁 Dynamic Gravity Toggle
+### Walk and Fly component group
 
-When the rider mounts the pig:
+Located at **Line ~13** in `component_groups`
 
-- Gravity is removed (via `fly` event)
-- `walk` component group is removed
-- `fly` component group is added (disabling gravity)
+```json
+"walk": {
+    "minecraft:physics": {
+        "has_gravity": true
+    }
+}
+"fly": {
+    "minecraft:physics": {
+        "has_gravity": false
+    },
+    "minecraft:flying_speed": {
+        "value": 0.0833333
+    }
+}
+```
 
-When the rider dismounts the pig:
-
-- Gravity is restored (via `walk` event)
-- `fly` component group is removed
-- `walk` component group is re-added
-
-This enables air control using `minecraft:input_air_controlled` for a flying experience.
-
----
-
-## 🐷 Full Rideable Component
-
+### Rideable component
 Located at **Line ~183** in `component_groups.minecraft:pig_saddled`:
 
 ```json
@@ -50,43 +71,10 @@ Located at **Line ~183** in `component_groups.minecraft:pig_saddled`:
 }
 ```
 
----
-
-## 🧠 Enabling Flight with Component Groups
-
-Defined under `component_groups`:
-
-### ✈️ Fly Group — Line ~18
-
-```json
-"fly": {
-    "minecraft:physics": {
-        "has_gravity": false
-    },
-    "minecraft:flying_speed": {
-        "value": 0.0833333
-    }
-}
-```
-
-### 🚶 Walk Group — Line ~13
-
-```json
-"walk": {
-    "minecraft:physics": {
-        "has_gravity": true
-    }
-}
-```
-
----
-
-## 🧩 Fly and Walk Events
+#### Fly and Walk Events
 
 Located in the `events` section — Line ~349:
 
-### 📤 Fly Event
-
 ```json
 "fly": {
     "add": {
@@ -100,11 +88,6 @@ Located in the `events` section — Line ~349:
         ]
     }
 }
-```
-
-### 📥 Walk Event
-
-```json
 "walk": {
     "remove": {
         "component_groups": [
@@ -118,6 +101,27 @@ Located in the `events` section — Line ~349:
     }
 }
 ```
+
+### what the code do:
+
+- Gravity is removed (via `fly` event) when player ride pig
+- `walk` component group is removed
+- `fly` component group is added (disabling gravity)
+
+When the rider dismounts the pig:
+
+- Gravity is restored (via `walk` event) when player exit riding pig
+- `fly` component group is removed
+- `walk` component group is re-added
+
+This enables air control using `minecraft:input_air_controlled` 
+
+
+
+
+---
+
+
 
 ---
 
@@ -138,30 +142,4 @@ Defined under `component_groups.minecraft:pig_saddled` — Line ~212:
 
 ---
 
-## 🎮 Air Control Component
 
-To enable control in the air, we add the `minecraft:input_air_controlled` component:
-
-Located at **Line ~209** in the `minecraft:pig_saddled` group:
-
-```json
-"minecraft:input_air_controlled": {
-    "strafe_speed_modifier": 1,
-    "backwards_movement_modifier": 0.5
-}
-```
-
----
-
-## ✅ Summary
-
-| Feature                        | Enabled by                              |
-|-------------------------------|------------------------------------------|
-| Air Control                   | `minecraft:input_air_controlled`        |
-| Toggle Gravity                | `fly` and `walk` events                  |
-| Disable Fall Damage           | `minecraft:damage_sensor`               |
-| Player Ride & Fly             | `minecraft:rideable` with enter/exit events |
-
-This setup allows standard walking mobs to be controlled mid-air, creating a "hover pig" without switching the entity to `movement.hover`.
-
----
